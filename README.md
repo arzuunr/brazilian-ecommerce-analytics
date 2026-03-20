@@ -1,69 +1,77 @@
-# Project Title: Technical Implementation and Predictive Analysis
+# Project Title: Multidimensional Analysis and Predictive Forecasting of the Olist E-Commerce Ecosystem
 
 ## Abstract
-This repository contains a comprehensive end-to-end machine learning pipeline developed to solve the **Insert Problem, e.g., Multi-channel E-commerce Optimization** challenge. The objective of this study was to move beyond simple heuristic models by implementing sophisticated feature engineering and ensemble learning techniques to extract actionable insights from complex datasets.
+This repository contains an end-to-end analytical framework and predictive pipeline developed for the **Olist Brazilian E-Commerce** dataset. Utilizing a relational database of over **100,000 orders**, this study implements a dual-track approach: a **strategic business diagnostic** (RFM Segmentation, Geospatial Analysis) and a **predictive modeling engine** to forecast transaction volumes. The project specifically addresses the **extrapolation challenges** inherent in high-growth e-commerce environments.
 
 ---
 
-## Theoretical Framework
-The core of this implementation rests on the principle of **Bias-Variance decomposition**. To ensure the model generalizes well to unseen data, the architecture prioritizes robust cross-validation and regularization.
+## Theoretical Framework: The Extrapolation Paradox
+The predictive component of this study explores the tension between **Stochastic Gradient Boosting** and **Ordinary Least Squares (OLS)** regression in the context of non-stationary time series. 
 
-For the **Insert Model Name, e.g., Gradient Boosting** implementation, the loss function was optimized using:
+While ensemble methods like **XGBoost** and **Random Forest** excel at capturing non-linear local dependencies, they inherently suffer from a "ceiling effect" when forecasting record-breaking growth. This project demonstrates that in presence of a strong linear trend, the **Bias-Variance tradeoff** favors global linear estimators. 
 
-$$L(y, F(x)) = \sum_{i=1}^{n} \psi(y_i, F(x_i)) + \Omega(F)$$
-
-where **$\psi$** represents the differentiable loss function and **$\Omega$** denotes the complexity penalty (regularization) to prevent overfitting in high-dimensional feature spaces.
+The optimization was guided by the **Root Mean Square Error (RMSE)**:
+$$\text{RMSE} = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}$$
+where $\hat{y}_i$ represents the forecasted order volume, emphasizing the penalty for large residuals during peak promotional periods (e.g., Black Friday).
 
 ---
 
 ## Methodology and Technical Workflow
 
-### 1. Data Engineering and Exploratory Analysis
-The raw data underwent a rigorous preprocessing phase. This included:
-* **Statistical imputation** of missing values using **K-Nearest Neighbors (KNN)** to preserve underlying data distributions.
-* **Transformation of skewed numerical features** using Box-Cox or Log-scaling to meet the normality assumptions of linear estimators.
-* **Dimensionality reduction** through **Principal Component Analysis (PCA)** where feature collinearity exceeded critical thresholds.
+### 1. Relational Data Engineering
+The raw data was ingested via an **SQLite** environment to maintain relational integrity across nine interconnected tables. 
+* **ETL Pipeline:** Implemented SQL-based joins to synthesize customer behavior with logistics performance.
+* **Feature Engineering:** Developed a **7-day Moving Average (Momentum)** and **Active Seller Regressors**, which proved to be the most significant predictors of sales velocity.
 
-### 2. Feature Architecture
-Rather than relying solely on raw inputs, this project emphasizes domain-driven feature construction. For instance, **Insert Example, e.g., creating an Arrival Delay feature by calculating the delta between estimated and actual delivery timestamps**. This transformed the model ability to capture non-linear relationships within the temporal data.
+### 2. Strategic Segmentation (RFM Model)
+To address the identified **96.6% Churn Risk**, I implemented a **Recency, Frequency, and Monetary (RFM)** model. By applying **Quantile-based binning**, customers were categorized into actionable segments:
+* **Champions:** High-velocity, high-value users requiring loyalty preservation.
+* **At Risk / Sleepers:** High-historical value users with declining recency, requiring targeted win-back interventions.
 
-### 3. Model Selection and Hyperparameter Optimization
-I implemented a competitive modeling approach, evaluating multiple architectures including **Random Forests, XGBoost, and Stacking Regressors**. Optimization was conducted via **Bayesian Search**, which explores the parameter space more efficiently than traditional Grid Search by modeling the acquisition function.
+### 3. Geospatial Optimization
+Using **Folium-based Heatmaps**, I mapped revenue density across 27 Brazilian states. The findings revealed a heavy concentration in the **Southeast (SP, RJ, MG)**, providing a data-driven justification for regional warehouse decentralization to reduce the identified **average delivery lead time of 12.5 days**.
+
+---
+
+## Predictive Modeling Performance
+
+I evaluated four distinct architectures to forecast daily order counts:
+
+| Model | Test RMSE | Technical Evaluation |
+| :--- | :--- | :--- |
+| **Multivariate Linear Regression** | **28.72** | **Winner:** Successfully extrapolated the linear growth trend beyond training boundaries. |
+| **Lasso Regression (L1)** | 29.73 | Successfully performed feature selection, removing redundant weekend indicators. |
+| **XGBoost** | 30.63 | Captured local volatility but struggled with trend-based extrapolation. |
+| **Random Forest** | 43.05 | Suffered from "Extrapolation Failure," hitting a prediction ceiling. |
 
 ---
 
 ## Installation and Environment Setup
-To replicate this environment and run the analysis, ensure you have **Python 3.9+** installed.
+Ensure **Python 3.9+** and a local **SQLite** environment are configured.
 
 ### Dependencies
-The primary libraries utilized in this stack include:
-* **Scikit-Learn**: Machine learning framework and preprocessing.
-* **Pandas/NumPy**: Data manipulation and vectorization.
-* **Matplotlib/Seaborn**: Statistical visualization.
-* **XGBoost/LightGBM**: Gradient boosting frameworks.
+* **Core:** `Pandas`, `NumPy`, `SciPy`
+* **ML:** `Scikit-Learn`, `XGBoost`
+* **Visuals:** `Seaborn`, `Plotly`, `Folium`
 
 ### Execution
 Clone the repository:
-`git clone [https://github.com/arzuunr/brazilian-ecommerce-analytics.git]`
+`git clone https://github.com/arzuunr/brazilian-ecommerce-analytics.git`
 
-Install requirements:
+Install dependencies:
 `pip install -r requirements.txt`
 
-Execute the main pipeline:
+Run the diagnostic and model:
 `python main.py`
 
 ---
 
-## Performance Evaluation and Results
-The final model achieved a **Insert Metric, e.g., RMSE or F1-Score** of **Value**, placing it within the top **Percentage**% of the Kaggle leaderboard for this specific challenge. 
+## Conclusion and Future Scalability
+The analysis exposes a **"Leaky Bucket" syndrome**: while acquisition and daily growth are robust, the **3.01% retention rate** represents a critical operational bottleneck. 
 
-Beyond raw metrics, the **Feature Importance analysis** revealed that **Insert Technical Insight, e.g., Payment Sequential was the primary driver of customer churn**, providing a clear path for business logic implementation or further algorithmic refinement.
+To transition this project to a **Google-scale production environment**, future development will focus on:
+* **Modularization:** Refactoring the procedural script into a **Class-based Pipeline Architecture**.
+* **Containerization:** Packaging the environment via **Docker** for cross-platform deployment.
+* **MLOps:** Implementing **Walk-Forward Validation** triggers to handle future non-linear shifts in e-commerce trends.
 
----
-
-## Future Research and Scalability
-To transition this from a static analysis to a production-level tool, future iterations will focus on:
-* **Modularization**: Transitioning the pipeline into a structured Python package.
-* **CI/CD Integration**: Implementing automated triggers for model retraining.
-* **Containerization**: Using **Docker** to ensure environment parity across distributed systems.
 
