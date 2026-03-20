@@ -44,7 +44,7 @@ The primary libraries utilized in this stack include:
 
 ### Execution
 Clone the repository:
-`git clone [Your Repository URL]`
+`git clone [https://github.com/arzuunr/brazilian-ecommerce-analytics.git]`
 
 Install requirements:
 `pip install -r requirements.txt`
